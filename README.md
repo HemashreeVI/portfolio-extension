@@ -1,70 +1,166 @@
 # Nova Launchpad
 
-Your personal Chrome new tab for the job hunt:
+**A Chrome new tab that runs my job hunt.** It scores job postings from Naukri, Internshala, LinkedIn and others against my resume. It also tracks my LeetCode and GitHub streaks, surfaces CDC placement mail and my YouTube channel, and nudges me before I lose a streak or miss a deadline.
 
-- **YouTube:** your channel with its latest uploads.
-- **GitHub:** your profile and contribution graph.
-- **Mail:** unread CDC, NeoPAT and job-alert mail from Gmail.
-- **Job Radar:** jobs scored against your resume.
-- **LeetCode:** today's daily problem and your streak.
-- **Bottom:** a ticker of hot tech news.
+![Manifest V3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)
+![Vanilla JS](https://img.shields.io/badge/JavaScript-vanilla%2C%20no%20build-F7DF1E?logo=javascript&logoColor=black)
+![Dependencies](https://img.shields.io/badge/dependencies-0-success)
+![Privacy](https://img.shields.io/badge/data-stays%20in%20your%20browser-blueviolet)
 
-Click ✎ to drag any box anywhere, hide boxes, or change the size.
+![Nova Launchpad new tab](docs/new-tab.webp)
+<sub>Screenshot with demo data.</sub>
 
-## Install (2 minutes)
+---
 
-1. Download this repo: **Code → Download ZIP** on GitHub, then unzip it (or `git clone` it).
-2. Open `chrome://extensions` and turn on **Developer mode** (top right).
-3. Click **Load unpacked** and pick the unzipped folder, the one that contains `manifest.json`.
-4. Chrome asks whether to keep the new new-tab page: choose **Keep it**.
-   If another extension controls your new tab (e.g. an F1 one), turn it off. Chrome only lets one extension own the new tab.
-5. Pin Nova: puzzle icon → pin. The red number on the icon is the count of new strong job matches.
-6. The settings drawer opens on first run. Fill in your **name**, **LeetCode**, **GitHub** and **YouTube channel** (`@handle`), check the **job searches**, then click **Save**.
-7. Click **Send a test notification**. If nothing appears, allow Chrome notifications in your OS settings (Windows: Settings → System → Notifications → Google Chrome).
+## Why I built it
 
-Everything is stored only in your Chrome profile. Use **Settings → Export backup** now and then.
+Job hunting as a student meant juggling a dozen tabs every day: Naukri, Internshala, LinkedIn, Gmail for CDC drives, LeetCode for the daily problem, GitHub to keep the streak alive, YouTube Studio. Most job alerts were irrelevant, and the important CDC mails got buried.
 
-## What it does
+Nova puts all of that on the one page I open most often, the new tab:
+- It **ranks** jobs instead of just listing them.
+- It shows **what skills I'm missing** for the jobs that fit me.
+- It **reminds me** only when something actually needs doing.
 
-| Feature | How |
+## Features
+
+### 🎯 Job Radar: resume-fit scoring
+- **Every job gets a fit % against my resume:**
+  - skills (45%)
+  - role (25%)
+  - seniority, since I'm a 2027 graduate (20%)
+  - location (10%)
+
+  A "5+ years" posting can't score high no matter how many skills match.
+- **Shows the skills you're missing**, and aggregates the most-requested missing skills across all well-fitting jobs. That tells me what to learn next, e.g. *Power BI*, *Tableau*.
+- **Reads deadlines** ("Apply by 5 Dec") and reminds me 2 days before.
+- **Status pipeline:** Saved → Applied → OA / Test → Interview → Offer.
+
+<p align="center"><img src="docs/job-radar.webp" width="48%" alt="Job Radar drawer"> <img src="docs/fit-badge.webp" width="38%" alt="Fit badge on a job page"></p>
+
+### 🔎 Where the jobs come from
+| Source | How |
 |---|---|
-| **Job Radar** | Gives each job a **fit %**, a deadline when the site lists one, and the skills you're missing. Click a row to open the job. ♡ saves it, ✓ marks it applied, ✕ hides it. |
-| **Naukri / Internshala auto-scan** | Every 4 h (your choice) Nova opens your saved searches in a *minimized* window, reads the results and closes it, 3 searches per run. Only runs while Chrome is open. |
-| **Every other job site** | Browse LinkedIn, Indeed, Unstop, Wellfound, Instahyre, foundit, Glassdoor or company career pages, and Nova reads the listings you see. A fit badge appears on job pages, showing the skills you have and the ones you're missing. |
-| **Remote jobs** | Remotive's public API, checked on every scan. |
-| **Job alerts** | A notification for new jobs at or above your fit threshold (default 70%). A reminder 2 days before a saved job's deadline. |
-| **GitHub card** | Your profile and the same contribution graph as github.com (last ~5 months). Click it to open your profile. |
-| **YouTube card** | Your channel, subscriber count, latest video and recent uploads, read from your public channel page and its RSS feed (no API key). Click to open. |
-| **Mail box** | Import `gmail-filters.xml` into Gmail (Settings → Mail section has the link and steps). It sorts CDC, NeoPAT, job-alert and LinkedIn mail into labels. The box shows unread mail per label, tags "Register" (eligible drives), "Registered" and "Due" dates, and you get a notification for new CDC / NeoPAT mail (checked every 15 min). Reads Gmail's own unread feed with your signed-in session; nothing leaves your browser. |
-| **Edit layout (✎)** | Drag boxes anywhere, resize any single box from its ◢ corner (60–180%, double-click the corner for 100%), hide or show boxes, or scale all boxes at once (70–120%). **Reset layout** puts everything back. |
-| **LeetCode + GitHub reminders** | At 7:00 pm and 10:30 pm (editable), *only if you haven't solved a LeetCode problem or pushed to GitHub yet that day*. LeetCode's daily resets at 05:30 IST. |
-| **Tech news** | Google News for your topics (NVIDIA, GTA 6, OpenAI…) plus Hacker News, in the ticker. A notification every 4 h, quiet 11 pm–8 am. |
-| **Your background** | Click the 🖼 button and pick any photo. |
-| **Right-click → Save this job to Nova** | Works on any page. |
+| Naukri, Internshala | Auto-scanned every few hours: saved searches open in a minimized window, get read, and close |
+| LinkedIn, Indeed, Unstop, Wellfound, Instahyre, foundit, Glassdoor, company career pages | Read while you browse them, and a fit badge appears on job pages |
+| Any site with schema.org `JobPosting` data | Parsed directly (title, company, location, skills, `validThrough` deadline) |
+| Remotive | Public JSON API |
 
-### About the fit %
-It measures **how well a job matches your resume**:
-- skills (45%)
-- role (25%)
-- seniority: a 2027 student vs. "5+ years" (20%)
-- location (10%)
+### 📩 Mail: CDC, NeoPAT, job alerts
+- Comes with importable **Gmail filters** (`gmail-filters.xml`) that sort placement mail into labels:
+  - **CDC:** placement drives, eligibility, registrations.
+  - **NeoPAT:** tests and reminders.
+  - **Jobs:** job-site alerts, kept out of the inbox.
+  - **LinkedIn:** messages, which can be recruiters.
+- The Mail box shows unread mail per label, and tags each mail **Register**, **Registered** or **Due 28 Nov**.
+- A desktop notification arrives when new CDC or NeoPAT mail lands.
 
-It is *not* the probability of being hired; nobody can calculate that. Use it to decide which jobs to apply to first. Your skills, roles and locations can be edited in **Settings → Profile**.
+### 💻 LeetCode + GitHub
+- **LeetCode:** today's daily problem, a countdown to the 05:30 IST reset, solved counts (Easy/Medium/Hard), streak and SQL count.
+- **GitHub:** profile plus the **real contribution calendar** in GitHub's own colours.
+- **One evening reminder** (7:00 pm and 10:30 pm), sent **only if** there's no accepted LeetCode submission or no GitHub contribution that day.
 
-### Updating
-Download or `git pull` the latest version into the same folder, then click **↻** on Nova's card in `chrome://extensions`. Your settings, saved jobs and layout are kept.
+### ▶️ YouTube
+- Channel card with the latest upload, recent videos and views.
+- A gentle "time for a new one?" when the last upload is a week old.
 
-### If a site stops being read
-Job sites change their page layouts sometimes. **Settings → Job searches** shows the last scan result for each search, for example "⚠ naukri · data analyst · 0 read". If one keeps reading 0, the card selectors in `content/jobs.js` need updating for the new layout. Pages that include standard `JobPosting` data keep working regardless.
+### 🧩 Your layout
+- **Edit mode (✎):**
+  - Drag any box anywhere.
+  - Resize a single box from its corner (60–180%).
+  - Hide boxes, or scale everything at once.
+- **Saved per browser profile**, so every new tab opens the same way.
+- Use your own wallpaper, and a tech-news ticker (Google News topics + Hacker News) with rotating "did you know" facts.
 
-## Files
+<p align="center"><img src="docs/edit-mode.webp" width="70%" alt="Edit mode: drag and resize boxes"> <img src="docs/popup.webp" width="22%" alt="Toolbar popup"></p>
+
+## How it works
+
+```mermaid
+flowchart LR
+  subgraph Browser["Your Chrome profile"]
+    CS["content/jobs.js<br/>reads job cards and JSON-LD<br/>draws fit badge"] -->|jobs:found| SW
+    SW["background.js (service worker)<br/>alarms · scanner · notifications"] --> ST[("chrome.storage.local")]
+    NT["newtab.html / newtab.js<br/>boxes · layout engine"] <--> ST
+    PU["popup"] <--> SW
+  end
+  SW -->|minimized window| NK["Naukri / Internshala search pages"]
+  NK --> CS
+  NT & SW --> API["LeetCode GraphQL · GitHub · YouTube RSS<br/>Gmail atom feed · Google News · HN · Remotive"]
 ```
-manifest.json      extension config
-background.js      reminders, scans, notifications
-newtab.*           the new tab page
-popup.*            toolbar popup
-content/jobs.js    reads job pages and draws the fit badge
-lib/profile.js     your resume skills (default profile)
-lib/match.js       fit % scoring
-lib/feeds.js       LeetCode, GitHub, YouTube, news, Remotive
+
+- **No backend, no API keys, no build step.** Plain ES modules, about 2.8k lines.
+- **Fit scoring** (`lib/match.js`):
+  - A vocabulary of ~65 skills with aliases (e.g. `postgres` → `postgresql`, `power ?bi|dax` → `power bi`) is matched with word-boundary regexes.
+  - The score is coverage of the job's skills, plus role match, seniority (catches "Senior", "Lead" and "N+ years"), and preferred locations.
+- **Scanning:** the service worker opens a search page in a minimized window, waits for the content script to report the cards it read (with a settle timer and a hard timeout), then closes the window. Each source's result (`N read`, or why it failed) is shown in Settings, so a layout change on a job site is visible rather than silent.
+- **Safe by construction:**
+  - Every piece of text from the web is inserted with `textContent`, never `innerHTML`.
+  - Job descriptions are parsed with `DOMParser`, which builds an inert document, so nothing in them runs.
+  - The on-page badge lives in a closed Shadow DOM.
+  - Links are restricted to `http(s)`.
+- **Reliability:**
+  - API responses are cached with a stale fallback, so the page renders offline.
+  - Storage writes from many tabs go through one promise queue, so concurrent reports never overwrite each other.
+  - Alarms survive the MV3 service worker being suspended.
+- **Layout engine:**
+  - Boxes are absolutely positioned on a zoomable board, and positions are saved as fractions of the viewport so they adapt to other screen sizes.
+  - Per-box size uses `transform: scale`, so positions stay untouched.
+  - Narrow windows fall back to a stacked, scrollable layout.
+
+## Install
+
+1. Download this repo (**Code → Download ZIP**) and unzip it, or `git clone` it.
+2. Open `chrome://extensions` and turn on **Developer mode** (top right).
+3. Click **Load unpacked** and select the folder that contains `manifest.json`.
+4. Open a new tab. If Chrome asks about the new-tab page, choose **Keep it**. Turn off any other extension that controls the new tab.
+5. Settings (☰) opens on first run:
+   - Add your name, LeetCode username, GitHub username and YouTube channel.
+   - Check the job searches and your resume skills, then click **Save**.
+6. *(Optional)* Gmail: Settings → Gmail → download the filters, then in Gmail go to ⚙ → See all settings → Filters and Blocked Addresses → **Import filters**.
+7. Click **Send a test notification** to make sure your OS allows Chrome notifications.
+
+**Updating:** pull or download the new version into the same folder, then click **↻** on the extension in `chrome://extensions`. Settings, saved jobs and layout are kept.
+
+## Privacy and permissions
+
+Everything (settings, profile, jobs, layout) is stored in `chrome.storage.local` in your browser. Nothing is sent to any server of mine; there isn't one. **Export / Import backup** in Settings moves your data between computers.
+
+| Permission | Why |
+|---|---|
+| `storage`, `unlimitedStorage` | Your settings, jobs and wallpaper |
+| `alarms`, `notifications` | Reminders, scans, alerts |
+| `contextMenus`, `activeTab` | Right-click "Save this job", and scoring the current page from the popup |
+| Job sites (content script) | Reading job listings you view, and drawing the fit badge |
+| `leetcode.com`, `api.github.com`, `github.com/users/*` | Your stats and contribution calendar |
+| `www.youtube.com` | Your channel page and its public RSS feed |
+| `mail.google.com` | Gmail's unread-mail feed for your labels, using your signed-in session (no password stored) |
+| `news.google.com`, `hn.algolia.com`, `remotive.com` | News ticker and remote jobs |
+
+## Limitations
+
+- **Fit % is a resume match, not a hiring probability.** It's for deciding what to apply to first.
+- **Job sites change their HTML.** If a source keeps showing `0 read`, its selectors in `content/jobs.js` need updating. Pages with `JobPosting` JSON-LD keep working regardless.
+- **Scans and reminders only run while Chrome is open.**
+- **Desktop only.** Chrome on Android and iOS doesn't support extensions.
+- **The Gmail box uses Gmail's long-standing atom feed** (unread mail only). If Google retires it, the box shows an error rather than wrong data.
+
+## Project structure
+
 ```
+manifest.json        MV3 manifest
+background.js        service worker: alarms, reminders, Naukri/Internshala scanner, notifications
+content/jobs.js      reads job cards and JSON-LD on job sites, draws the fit badge
+newtab.html/.css/.js the new tab: boxes, drawers, settings, drag/resize layout engine
+popup.html/.css/.js  toolbar popup: score the current page, today's status
+lib/profile.js       resume profile + skill vocabulary
+lib/match.js         fit scoring, deadline parsing
+lib/jobs.js          job store: de-duplication, scoring, pruning, skill gaps
+lib/feeds.js         LeetCode, GitHub, YouTube, Gmail, news, Remotive
+lib/store.js         storage helpers + cache with stale fallback
+gmail-filters.xml    importable Gmail filters
+docs/                README screenshots
+```
+
+## Tech
+
+JavaScript (ES modules), Chrome Extensions Manifest V3 (service worker, alarms, notifications, content scripts, Shadow DOM), LeetCode GraphQL, GitHub REST, RSS/Atom parsing, schema.org JobPosting, CSS (glassmorphism, grid, `zoom`/`transform` layout).
