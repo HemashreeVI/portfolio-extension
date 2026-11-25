@@ -12,6 +12,10 @@
 
 ---
 
+<p align="center"><a href="https://github.com/HemashreeVI/portfolio-extension/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87_Download-latest_release_(.zip)-2ea44f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download the latest release"></a></p>
+
+> **Install in 1 minute:** download the `.zip` from the [latest release](https://github.com/HemashreeVI/portfolio-extension/releases/latest) → unzip it → open `chrome://extensions` → turn on **Developer mode** → **Load unpacked** → pick the unzipped folder.
+
 ## Why I built it
 
 Job hunting as a student meant juggling a dozen tabs every day: Naukri, Internshala, LinkedIn, Gmail for CDC drives, LeetCode for the daily problem, GitHub to keep the streak alive, YouTube Studio. Most job alerts were irrelevant, and the important CDC mails got buried.
